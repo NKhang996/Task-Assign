@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Sổ Việc — Quản lý công việc nội bộ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=sn-pro@400,500,600,700,800&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#F7F5EF;
@@ -32,8 +34,8 @@
   --done-soft:#E4F1E6;
   --shadow: 0 1px 2px rgba(22,35,61,.06), 0 8px 24px rgba(22,35,61,.08);
   --radius: 10px;
-  --font-display: 'Fraunces', serif;
-  --font-body: 'Inter', sans-serif;
+  --font-display: 'SN Pro', 'Inter', system-ui, sans-serif;
+  --font-body: 'SN Pro', 'Inter', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
 }
 [data-theme="dark"]{
@@ -99,7 +101,7 @@ a{color:inherit;}
   display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
   font-family:var(--font-display);color:#fff;font-size:26px;font-weight:600;
 }
-.login-card h1{font-family:var(--font-display);font-size:26px;margin:0 0 6px;color:var(--ink);font-weight:600;}
+.login-card h1{font-family:var(--font-display);font-size:26px;margin:0 0 6px;color:var(--ink);font-weight:800;letter-spacing:-.02em;}
 .login-card p{color:var(--ink-soft);font-size:14px;margin:0 0 28px;line-height:1.5;}
 .btn-google{
   display:flex;align-items:center;justify-content:center;gap:10px;
@@ -122,7 +124,7 @@ a{color:inherit;}
 }
 .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 20px;}
 .brand-mark{width:30px;height:30px;border-radius:8px;background:var(--emerald);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);color:#fff;font-weight:700;font-size:15px;flex-shrink:0;}
-.brand-name{font-family:var(--font-display);font-weight:600;font-size:16px;color:#fff;}
+.brand-name{font-family:var(--font-display);font-weight:800;font-size:16px;color:#fff;letter-spacing:-.01em;}
 .nav-section-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--sidebar-text-dim);padding:14px 10px 6px;font-weight:600;}
 .nav-item{
   display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;
@@ -149,7 +151,7 @@ a{color:inherit;}
   display:flex;align-items:center;gap:12px;padding:14px 24px;border-bottom:1px solid var(--paper-line);
   background:var(--paper-raised);
 }
-#pageTitle{font-family:var(--font-display);font-size:20px;font-weight:600;margin-right:auto;}
+#pageTitle{font-family:var(--font-display);font-size:20px;font-weight:800;letter-spacing:-.01em;margin-right:auto;}
 .search-box{display:flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--paper-line);border-radius:8px;padding:7px 12px;width:220px;}
 .search-box input{border:none;background:transparent;outline:none;font-size:13px;color:var(--ink);width:100%;}
 .icon-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--paper-line);background:var(--paper-raised);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--ink-soft);transition:.12s;}
@@ -191,7 +193,7 @@ a{color:inherit;}
 
 /* Cards / panels */
 .panel{background:var(--paper-raised);border:1px solid var(--paper-line);border-radius:var(--radius);}
-.section-title{font-family:var(--font-display);font-size:16px;font-weight:600;margin:0 0 12px;}
+.section-title{font-family:var(--font-display);font-size:16px;font-weight:700;letter-spacing:-.01em;margin:0 0 12px;}
 
 /* --------- OVERVIEW / DASHBOARD --------- */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px;}
@@ -213,20 +215,51 @@ a{color:inherit;}
 .workload-bar-fg{height:100%;background:var(--emerald);border-radius:6px;}
 
 /* --------- LIST / LEDGER TREE --------- */
-.ledger{border:1px solid var(--paper-line);border-radius:var(--radius);background:var(--paper-raised);overflow:hidden;}
-.ledger-head{display:grid;grid-template-columns:44px 1fr 130px 110px 120px 110px 130px 90px;gap:10px;padding:10px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);font-weight:700;border-bottom:1px solid var(--paper-line);background:var(--paper);}
-.task-row{display:grid;grid-template-columns:44px 1fr 130px 110px 120px 110px 130px 90px;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px dashed var(--paper-line);position:relative;transition:.1s;}
+.ledger{
+  border:1px solid var(--paper-line);border-radius:var(--radius);background:var(--paper-raised);overflow:hidden;
+  --col-stt:44px; --col-name:1fr; --col-pic:130px; --col-priority:110px; --col-progress:120px; --col-status:110px; --col-deadline:130px; --col-actions:90px;
+}
+.ledger-head{display:grid;grid-template-columns:var(--col-stt) var(--col-name) var(--col-pic) var(--col-priority) var(--col-progress) var(--col-status) var(--col-deadline) var(--col-actions);gap:10px;padding:10px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);font-weight:700;border-bottom:1px solid var(--paper-line);background:var(--paper);position:relative;}
+.ledger-head > span{position:relative;overflow:visible;}
+.col-resizer{position:absolute;top:-10px;bottom:-10px;right:-9px;width:8px;cursor:col-resize;z-index:5;}
+.col-resizer:hover, .col-resizer.active{background:var(--emerald-soft);}
+.task-row{display:grid;grid-template-columns:var(--col-stt) var(--col-name) var(--col-pic) var(--col-priority) var(--col-progress) var(--col-status) var(--col-deadline) var(--col-actions);gap:10px;align-items:start;padding:10px 14px;border-bottom:1px dashed var(--paper-line);position:relative;transition:background .1s;}
 .task-row:hover{background:var(--paper);}
 .task-row:last-child{border-bottom:none;}
-.task-row .stt{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-faint);}
-.task-title-cell{display:flex;align-items:center;gap:6px;min-width:0;}
-.task-check{width:16px;height:16px;border-radius:5px;border:2px solid var(--paper-line);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;}
+.task-row .stt{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-faint);padding-top:2px;}
+.task-title-cell{display:flex;align-items:flex-start;gap:6px;min-width:0;}
+.task-check{width:16px;height:16px;border-radius:5px;border:2px solid var(--paper-line);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;margin-top:2px;transition:.15s;}
 .task-check.done{background:var(--done);border-color:var(--done);}
-.task-title-text{font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+.task-check:hover{border-color:var(--emerald);}
+.task-title-text{font-size:13.5px;font-weight:500;white-space:normal;overflow-wrap:break-word;line-height:1.4;cursor:pointer;padding-top:1px;}
 .task-title-text.done{text-decoration:line-through;color:var(--ink-faint);}
-.expand-toggle{width:16px;height:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--ink-faint);border-radius:4px;}
-.expand-toggle:hover{background:var(--paper-line);}
-.expand-spacer{width:16px;flex-shrink:0;}
+.task-title-text.just-done{animation:doneFlash .5s ease;}
+@keyframes doneFlash{0%{background:var(--done-soft);}100%{background:transparent;}}
+.task-check.pop{animation:checkPop .35s cubic-bezier(.34,1.56,.64,1);}
+@keyframes checkPop{0%{transform:scale(1);}45%{transform:scale(1.35);}100%{transform:scale(1);}}
+.inline-select{border:1.5px solid transparent;background:transparent;font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.02em;border-radius:20px;padding:3px 8px;appearance:none;cursor:pointer;width:100%;}
+.inline-select:hover{border-color:var(--paper-line);}
+.inline-select:focus{outline:none;border-color:var(--emerald);}
+.inline-select.urgent{background:var(--urgent-soft);color:var(--urgent);}
+.inline-select.high{background:var(--high-soft);color:var(--high);}
+.inline-select.medium{background:var(--medium-soft);color:var(--medium);}
+.inline-select.low{background:var(--low-soft);color:var(--low);}
+.inline-select.status-todo{background:var(--low-soft);color:var(--ink-soft);}
+.inline-select.status-inprogress{background:var(--medium-soft);color:var(--medium);}
+.inline-select.status-review{background:var(--high-soft);color:var(--high);}
+.inline-select.status-done{background:var(--done-soft);color:var(--done);}
+.progress-pct-input{width:34px;border:1px solid transparent;background:transparent;font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);text-align:right;border-radius:4px;padding:1px 2px;}
+.progress-pct-input:hover{border-color:var(--paper-line);}
+.progress-pct-input:focus{outline:none;border-color:var(--emerald);background:var(--paper);}
+.progress-bar-fg{transition:width .3s ease;}
+.expand-toggle{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--ink-soft);border-radius:6px;transition:.12s;}
+.expand-toggle:hover{background:var(--paper-line);color:var(--ink);transform:scale(1.05);}
+.expand-toggle svg{width:13px;height:13px;transition:transform .15s ease;}
+.expand-toggle.open svg{transform:rotate(90deg);}
+.expand-spacer{width:22px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;}
+.subtree-hint{width:22px;height:22px;display:none;align-items:center;justify-content:center;flex-shrink:0;color:var(--ink-faint);font-size:11px;border-radius:6px;position:relative;}
+.task-row:hover .subtree-hint.has-kids{display:flex;}
+.subtree-hint.has-kids::after{content:attr(data-count);position:absolute;top:-4px;right:-4px;background:var(--emerald);color:#fff;font-family:var(--font-mono);font-size:8.5px;font-weight:700;border-radius:8px;padding:0 3px;line-height:13px;min-width:13px;text-align:center;}
 .progress-cell{display:flex;align-items:center;gap:7px;}
 .progress-bar-bg{flex:1;height:6px;background:var(--paper-line);border-radius:6px;overflow:hidden;}
 .progress-bar-fg{height:100%;background:var(--emerald);}
@@ -467,7 +500,7 @@ const CONFIG = {
   // Email nằm trong danh sách này sẽ tự động là Admin khi đăng nhập lần đầu
   ADMIN_EMAILS: [
     // "ban@congty.com",
-    "khang.nguyentan@spxexpress.com",
+    "dev@local.test",
   ],
   // Vai trò mặc định cho người dùng mới không nằm trong ADMIN_EMAILS
   DEFAULT_ROLE: "member", // 'admin' | 'manager' | 'member'
@@ -554,6 +587,30 @@ function toast(msg, kind="ok"){
   setTimeout(()=>{ el.remove(); }, 3200);
 }
 function uid(){ return Math.random().toString(36).slice(2,10); }
+
+/* ============================================================
+   @MENTIONS — parse "@Tên" in free text and resolve to user ids
+   ============================================================ */
+function findMentionedUids(text){
+  if(!text) return [];
+  const found = [];
+  const users = Object.values(S.usersMap).sort((a,b)=> (b.name||"").length-(a.name||"").length);
+  const matches = [...text.matchAll(/@([\p{L}0-9._]+(?:\s[\p{L}0-9._]+){0,2})/gu)];
+  matches.forEach(m=>{
+    const raw = m[1].toLowerCase();
+    const hit = users.find(u=> u.name && (u.name.toLowerCase()===raw || u.name.toLowerCase().startsWith(raw) || raw.startsWith(u.name.toLowerCase().split(" ")[0])));
+    if(hit) found.push(hit.uid);
+  });
+  return found;
+}
+// Adds any @mentioned team members found in `text` into the given assignee Set (auto-assign).
+function applyMentions(text, assigneeSet){
+  const mentioned = findMentionedUids(text);
+  let added = 0;
+  mentioned.forEach(u=>{ if(!assigneeSet.has(u)){ assigneeSet.add(u); added++; } });
+  if(added) toast(`Đã tự động giao việc cho ${added} người được @nhắc tới`);
+  return mentioned;
+}
 
 function avatarHTML(u, size=""){
   if(!u) return `<div class="avatar">?</div>`;
@@ -742,6 +799,11 @@ function childrenOf(id){
   return S.tasks.filter(t=>t.parentId === id).sort((a,b)=>(a.order||0)-(b.order||0));
 }
 function rootTasks(){ return childrenOf(null); }
+function countAllDescendants(id){
+  let n = 0;
+  childrenOf(id).forEach(k=>{ n += 1 + countAllDescendants(k.id); });
+  return n;
+}
 
 function recomputeParentProgress(){
   // bottom-up progress rollup for display purposes only (does not write back unless manual override absent)
@@ -1032,8 +1094,15 @@ function renderListView(c){
   c.innerHTML = `
     ${filtersBarHTML()}
     <div class="ledger">
-      <div class="ledger-head">
-        <span>STT</span><span>Tên việc</span><span>PIC</span><span>Ưu tiên</span><span>Tiến độ</span><span>Trạng thái</span><span>Hạn chót</span><span></span>
+      <div class="ledger-head" id="ledgerHead">
+        <span data-col="col-stt">STT</span>
+        <span data-col="col-name">Tên việc<span class="col-resizer" data-col="col-name"></span></span>
+        <span data-col="col-pic">PIC<span class="col-resizer" data-col="col-pic"></span></span>
+        <span data-col="col-priority">Ưu tiên<span class="col-resizer" data-col="col-priority"></span></span>
+        <span data-col="col-progress">Tiến độ<span class="col-resizer" data-col="col-progress"></span></span>
+        <span data-col="col-status">Trạng thái<span class="col-resizer" data-col="col-status"></span></span>
+        <span data-col="col-deadline">Hạn chót<span class="col-resizer" data-col="col-deadline"></span></span>
+        <span data-col="col-actions"></span>
       </div>
       <div id="ledgerBody"></div>
       ${canManage() ? `<div class="add-root-row" id="addRootBtn">＋ Thêm main task</div>` : ""}
@@ -1052,14 +1121,18 @@ function renderListView(c){
     let html = `<div class="task-row" data-id="${t.id}">
       <span class="stt">${depth===0? String(stt++).padStart(2,'0') : ''}</span>
       <div class="task-title-cell" style="padding-left:${depth*20}px;">
-        ${hasKids ? `<span class="expand-toggle" data-toggle="${t.id}">${isOpen?'▾':'▸'}</span>` : `<span class="expand-spacer"></span>`}
+        ${hasKids ? `<span class="expand-toggle ${isOpen?'open':''}" data-toggle="${t.id}"><svg viewBox="0 0 16 16" fill="none"><path d="M5 3l6 5-6 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>` : `<span class="expand-spacer"></span>`}
         <span class="task-check ${t.status==='done'?'done':''}" data-check="${t.id}">${t.status==='done'?'✓':''}</span>
         <span class="task-title-text ${t.status==='done'?'done':''}" data-open="${t.id}">${esc(t.title)}</span>
+        ${hasKids && !isOpen ? `<span class="subtree-hint has-kids" data-count="${countAllDescendants(t.id)}" title="${countAllDescendants(t.id)} việc con bên trong">☰</span>` : ''}
       </div>
-      <span class="pic-stack">${(t.assignees||[]).slice(0,3).map(uidv=>avatarHTML(S.usersMap[uidv])).join("")}</span>
-      <span class="badge ${t.priority}">${PRIORITIES.find(p=>p.id===t.priority)?.label||""}</span>
-      <div class="progress-cell"><div class="progress-bar-bg"><div class="progress-bar-fg" style="width:${prog}%"></div></div><span class="progress-pct">${prog}%</span></div>
-      <span class="badge status-${t.status}">${STATUSES.find(s=>s.id===t.status)?.label||""}</span>
+      <span class="pic-stack">${(t.assignees||[]).slice(0,4).map(uidv=>avatarHTML(S.usersMap[uidv])).join("")}${(t.assignees||[]).length>4?`<span class="avatar" style="background:var(--paper-line);color:var(--ink-soft);font-size:9px;">+${(t.assignees||[]).length-4}</span>`:''}</span>
+      <select class="inline-select ${t.priority}" data-inline-priority="${t.id}" ${canManage()?'':'disabled'}>${PRIORITIES.map(p=>`<option value="${p.id}" ${t.priority===p.id?'selected':''}>${p.label}</option>`).join("")}</select>
+      <div class="progress-cell">
+        <div class="progress-bar-bg"><div class="progress-bar-fg" style="width:${prog}%"></div></div>
+        ${hasKids ? `<span class="progress-pct">${prog}%</span>` : `<span style="display:flex;align-items:center;flex-shrink:0;"><input class="progress-pct-input" type="number" min="0" max="100" value="${prog}" data-inline-progress="${t.id}" ${canManage()?'':'disabled'}/><span style="font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);">%</span></span>`}
+      </div>
+      <select class="inline-select status-${t.status}" data-inline-status="${t.id}" ${canManage()?'':'disabled'}>${STATUSES.map(s=>`<option value="${s.id}" ${t.status===s.id?'selected':''}>${s.label}</option>`).join("")}</select>
       <span class="deadline-cell ${overdue?'overdue':''}">${fmtDate(t.deadline)}</span>
       <span class="row-actions">
         ${canManage()?`<button data-addsub="${t.id}" title="Thêm subtask">＋</button><button data-del="${t.id}" title="Xoá">🗑</button>`:''}
@@ -1078,10 +1151,108 @@ function renderListView(c){
 
   $all("[data-toggle]", body).forEach(el=>el.addEventListener("click", (e)=>{ e.stopPropagation(); const id=el.dataset.toggle; S.expanded.has(id)?S.expanded.delete(id):S.expanded.add(id); renderListView(c); }));
   $all("[data-open]", body).forEach(el=>el.addEventListener("click", ()=> openTaskModal(el.dataset.open)));
-  $all("[data-check]", body).forEach(el=>el.addEventListener("click", (e)=>{ e.stopPropagation(); const id=el.dataset.check; const t=S.tasks.find(x=>x.id===id); const newStatus = t.status==='done'?'todo':'done'; patchTask(id,{status:newStatus, progress:newStatus==='done'?100:t.progress}); }));
+  $all("[data-check]", body).forEach(el=>el.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    const id=el.dataset.check; const t=S.tasks.find(x=>x.id===id); const newStatus = t.status==='done'?'todo':'done';
+    if(newStatus==='done') fireDoneEffect(el);
+    patchTask(id,{status:newStatus, progress:newStatus==='done'?100:t.progress});
+  }));
   $all("[data-addsub]", body).forEach(el=>el.addEventListener("click",(e)=>{ e.stopPropagation(); openTaskModal(null, el.dataset.addsub); }));
   $all("[data-del]", body).forEach(el=>el.addEventListener("click", async (e)=>{ e.stopPropagation(); if(confirm("Xoá task này và toàn bộ subtask con?")){ await deleteTaskCascade(el.dataset.del); toast("Đã xoá"); }}));
+  $all("[data-inline-priority]", body).forEach(el=>{
+    el.addEventListener("click", e=> e.stopPropagation());
+    el.addEventListener("change", (e)=>{ e.stopPropagation(); patchTask(el.dataset.inlinePriority, { priority: el.value }); });
+  });
+  $all("[data-inline-status]", body).forEach(el=>{
+    el.addEventListener("click", e=> e.stopPropagation());
+    el.addEventListener("change", (e)=>{
+      e.stopPropagation();
+      const id = el.dataset.inlineStatus;
+      const patch = { status: el.value };
+      if(el.value==='done'){ patch.progress = 100; fireDoneEffect(el.closest(".task-row").querySelector("[data-check]")); }
+      patchTask(id, patch);
+    });
+  });
+  $all("[data-inline-progress]", body).forEach(el=>{
+    el.addEventListener("click", e=> e.stopPropagation());
+    el.addEventListener("change", (e)=>{
+      e.stopPropagation();
+      const id = el.dataset.inlineProgress;
+      let val = Math.max(0, Math.min(100, parseInt(el.value||"0",10)||0));
+      el.value = val;
+      patchTask(id, { progress: val });
+    });
+  });
   const addRoot = $("#addRootBtn"); if(addRoot) addRoot.addEventListener("click", ()=> openTaskModal(null, null));
+  initColumnResizers();
+}
+
+/* Visual "done" celebration on the checkbox + row */
+function fireDoneEffect(checkEl){
+  if(!checkEl) return;
+  checkEl.classList.remove("pop"); void checkEl.offsetWidth; checkEl.classList.add("pop");
+  const row = checkEl.closest(".task-row");
+  const titleEl = row && row.querySelector(".task-title-text");
+  if(titleEl){ titleEl.classList.remove("just-done"); void titleEl.offsetWidth; titleEl.classList.add("just-done"); }
+  spawnConfetti(checkEl);
+}
+function spawnConfetti(anchorEl){
+  const rect = anchorEl.getBoundingClientRect();
+  const colors = ["#1F7A5C","#2E7C93","#C97C1E","#4E8C5B"];
+  for(let i=0;i<8;i++){
+    const p = document.createElement("div");
+    const size = 5+Math.random()*3;
+    p.style.cssText = `position:fixed;left:${rect.left+rect.width/2}px;top:${rect.top+rect.height/2}px;width:${size}px;height:${size}px;background:${colors[i%colors.length]};border-radius:2px;pointer-events:none;z-index:9999;`;
+    document.body.appendChild(p);
+    const angle = (Math.PI*2*i)/8;
+    const dist = 26+Math.random()*14;
+    p.animate([
+      { transform:"translate(0,0) rotate(0deg)", opacity:1 },
+      { transform:`translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist - 10}px) rotate(${180+Math.random()*180}deg)`, opacity:0 }
+    ], { duration:520, easing:"cubic-bezier(.2,.8,.3,1)" }).onfinish = ()=> p.remove();
+  }
+}
+
+/* Draggable column widths for the ledger table (list view) — persisted across sessions */
+function loadColWidths(){
+  try{ return JSON.parse(localStorage.getItem("sv_list_col_widths")||"{}"); }catch(e){ return {}; }
+}
+function saveColWidths(widths){
+  try{ localStorage.setItem("sv_list_col_widths", JSON.stringify(widths)); }catch(e){}
+}
+function applyStoredColWidths(ledger){
+  const widths = loadColWidths();
+  Object.entries(widths).forEach(([col,px])=> ledger.style.setProperty(`--${col}`, px+"px"));
+}
+function initColumnResizers(){
+  const ledger = $(".ledger");
+  if(!ledger) return;
+  applyStoredColWidths(ledger);
+  $all(".col-resizer", ledger).forEach(handle=>{
+    handle.addEventListener("mousedown", (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      const col = handle.dataset.col;
+      const startX = e.clientX;
+      const startWidth = $(`[data-col="${col}"]`, ledger).getBoundingClientRect().width;
+      handle.classList.add("active");
+      let finalWidth = startWidth;
+      function onMove(ev){
+        const delta = ev.clientX - startX;
+        finalWidth = Math.max(50, startWidth + delta);
+        ledger.style.setProperty(`--${col}`, finalWidth+"px");
+      }
+      function onUp(){
+        handle.classList.remove("active");
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+        const widths = loadColWidths();
+        widths[col] = Math.round(finalWidth);
+        saveColWidths(widths);
+      }
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+    });
+  });
 }
 
 function filtersBarHTML(){
@@ -1119,7 +1290,7 @@ function renderKanban(c){
             <div class="kanban-card-title">${esc(t.title)}${t.isQuick?' <span class="quick-flag">Phát sinh</span>':''}</div>
             <div class="kanban-card-meta">
               <span class="badge ${t.priority}">${PRIORITIES.find(p=>p.id===t.priority)?.label||""}</span>
-              <span class="pic-stack">${(t.assignees||[]).slice(0,2).map(uidv=>avatarHTML(S.usersMap[uidv])).join("")}</span>
+              <span class="pic-stack">${(t.assignees||[]).slice(0,3).map(uidv=>avatarHTML(S.usersMap[uidv])).join("")}${(t.assignees||[]).length>3?`<span class="avatar" style="background:var(--paper-line);color:var(--ink-soft);font-size:9px;">+${(t.assignees||[]).length-3}</span>`:''}</span>
             </div>
             <div style="font-family:var(--font-mono);font-size:10.5px;color:${isOverdue(t.deadline,t.status)?'var(--urgent)':'var(--ink-faint)'};margin-top:7px;">${fmtDate(t.deadline)}</div>
           </div>
@@ -1414,11 +1585,12 @@ function detailTabHTML(t, editing){
         ${users.map(u=>`<div class="assignee-opt ${((t.assignees||[]).includes(u.uid))?'active':''}" data-uid="${u.uid}">${avatarHTML(u)} ${esc(u.name)}</div>`).join("") || '<span style="font-size:12px;color:var(--ink-faint);">Chưa có thành viên nào khác</span>'}
       </div>
     </div>
-    ${!editing && !t.hideParentProgress ? `<div class="field-row"><label>Tiến độ (%)</label><input type="text" id="progressInput" value="0" placeholder="0-100"/></div>`:
-      `<div class="field-row"><label>Tiến độ thủ công (%) — bỏ trống nếu có subtask con để tự tính</label><input type="text" id="progressInput" value="${t.progress ?? 0}" placeholder="0-100"/></div>`}
+    ${editing && childrenOf(t.id).length ?
+      `<div class="field-row"><label>Tiến độ (tự động tính từ subtask con)</label><input type="text" value="${taskProgress(t)}%" disabled style="opacity:.6;"/></div>`
+      : `<div class="field-row"><label>Tiến độ (%)</label><input type="text" id="progressInput" value="${editing ? (t.progress ?? 0) : 0}" placeholder="0-100"/></div>`}
     <div class="field-row">
       <label>Mô tả</label>
-      <textarea id="descInput" placeholder="Ghi chú, bối cảnh công việc...">${esc(t.description||"")}</textarea>
+      <textarea id="descInput" placeholder="Ghi chú, bối cảnh công việc... (gõ @Tên để tự động giao việc cho người đó)">${esc(t.description||"")}</textarea>
     </div>
     <div style="display:flex;gap:10px;margin-top:6px;">
       <button class="btn-primary" id="saveTaskBtn" style="flex:1;justify-content:center;">${editing?'Lưu thay đổi':'Tạo công việc'}</button>
@@ -1445,7 +1617,7 @@ function updatesTabHTML(t){
       ${ups.map(u=>`<div class="update-item"><div class="update-meta">${esc(u.authorName)} · ${new Date(u.at).toLocaleString("vi-VN")}</div><div class="update-text">${esc(u.text)}</div></div>`).join("") || '<p style="font-size:13px;color:var(--ink-faint);">Chưa có cập nhật nào</p>'}
     </div>
     <div class="add-update-box">
-      <textarea id="newUpdateInput" placeholder="Viết cập nhật tiến độ..."></textarea>
+      <textarea id="newUpdateInput" placeholder="Viết cập nhật tiến độ... (@Tên để giao việc)"></textarea>
       <button class="btn-primary" id="addUpdateBtn" style="align-self:flex-end;">Gửi</button>
     </div>
   `;
@@ -1482,15 +1654,23 @@ function bindDetailTab(overlay, t, editing){
   if(saveBtn) saveBtn.addEventListener("click", async ()=>{
     const title = $("#mTitle", overlay).value.trim();
     if(!title){ toast("Nhập tên công việc","err"); return; }
+    const description = $("#descInput", overlay).value;
+    applyMentions(description, selectedAssignees);
+    const hasKids = editing && childrenOf(t.id).length>0;
     const data = {
       title,
       priority: selectedPriority,
       status: $("#statusSelect", overlay).value,
       deadline: $("#deadlineInput", overlay).value || null,
       assignees: [...selectedAssignees],
-      description: $("#descInput", overlay).value,
-      progress: Math.max(0, Math.min(100, parseInt($("#progressInput", overlay).value||"0",10)||0)),
+      description,
     };
+    // Only write progress for tasks without children — rollup tasks are computed live from
+    // subtasks and must never be overwritten with a stale value from this form.
+    if(!hasKids){
+      const pInput = $("#progressInput", overlay);
+      if(pInput) data.progress = Math.max(0, Math.min(100, parseInt(pInput.value||"0",10)||0));
+    }
     if(editing){ await patchTask(t.id, data); toast("Đã lưu"); }
     else { await createTask(activeParentId, data); toast("Đã tạo công việc"); }
     closeModal();
@@ -1524,8 +1704,13 @@ function bindUpdatesTab(overlay, t){
     const ta = $("#newUpdateInput", overlay);
     const val = ta.value.trim(); if(!val) return;
     await addUpdateToTask(t.id, val);
+    const mentioned = findMentionedUids(val);
+    const newAssignees = new Set(t.assignees||[]);
+    const before = newAssignees.size;
+    mentioned.forEach(u=> newAssignees.add(u));
+    if(newAssignees.size>before){ await patchTask(t.id, { assignees:[...newAssignees] }); }
     ta.value = "";
-    toast("Đã thêm cập nhật");
+    toast(newAssignees.size>before ? "Đã thêm cập nhật & tự động giao việc cho người được @nhắc" : "Đã thêm cập nhật");
     activeTab="updates"; renderTaskModal();
   });
 }
@@ -1568,7 +1753,7 @@ function renderQuickModal(){
           <label>Giao cho (PIC)</label>
           <div class="assignee-list" id="qAssigneeList">${users.map(u=>`<div class="assignee-opt ${((q.assignees||[]).includes(u.uid))?'active':''}" data-uid="${u.uid}">${avatarHTML(u)} ${esc(u.name)}</div>`).join("")}</div>
         </div>
-        <div class="field-row"><label>Ghi chú</label><textarea id="qNotes" placeholder="Bối cảnh, yêu cầu cụ thể...">${esc(q.notes||"")}</textarea></div>
+        <div class="field-row"><label>Ghi chú</label><textarea id="qNotes" placeholder="Bối cảnh, yêu cầu cụ thể... (@Tên để giao việc)">${esc(q.notes||"")}</textarea></div>
         <div style="display:flex;gap:10px;">
           <button class="btn-primary" id="qSaveBtn" style="flex:1;justify-content:center;">${editing?'Lưu':'Giao việc'}</button>
           ${editing?`<button class="btn-ghost" id="qConvertBtn">Gắn vào task chính</button>`:''}
@@ -1600,7 +1785,9 @@ function renderQuickModal(){
   $("#qSaveBtn", overlay).addEventListener("click", async ()=>{
     const title = $("#qTitle", overlay).value.trim();
     if(!title){ toast("Nhập tên việc","err"); return; }
-    const data = { title, priority:selectedPriority, status:$("#qStatus",overlay).value, deadline:$("#qDeadline",overlay).value||null, assignees:[...selectedAssignees], notes:$("#qNotes",overlay).value };
+    const notes = $("#qNotes",overlay).value;
+    applyMentions(notes, selectedAssignees);
+    const data = { title, priority:selectedPriority, status:$("#qStatus",overlay).value, deadline:$("#qDeadline",overlay).value||null, assignees:[...selectedAssignees], notes };
     if(editing){ await patchQuick(q.id, data); toast("Đã lưu"); } else { await createQuickTask(data); toast("Đã giao việc phát sinh"); }
     closeModal();
   });
@@ -1608,7 +1795,13 @@ function renderQuickModal(){
     $("#qConvertBtn", overlay).addEventListener("click", async ()=>{ await convertQuickToTask(q.id); closeModal(); });
     $("#qAddUpdateBtn", overlay).addEventListener("click", async ()=>{
       const ta = $("#qNewUpdate", overlay); const val = ta.value.trim(); if(!val) return;
-      await addUpdateToQuick(q.id, val); toast("Đã thêm cập nhật"); renderQuickModal();
+      await addUpdateToQuick(q.id, val);
+      const mentioned = findMentionedUids(val);
+      const newAssignees = new Set(q.assignees||[]);
+      const before = newAssignees.size;
+      mentioned.forEach(u=> newAssignees.add(u));
+      if(newAssignees.size>before) await patchQuick(q.id, { assignees:[...newAssignees] });
+      toast("Đã thêm cập nhật"); renderQuickModal();
     });
     $("#qDeleteBtn", overlay).addEventListener("click", async ()=>{
       if(confirm("Xoá việc phát sinh này?")){ await deleteQuick(q.id); closeModal(); }
