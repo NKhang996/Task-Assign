@@ -171,6 +171,16 @@ a{color:inherit;}
 .ai-quickadd .ai-icon{color:var(--emerald);font-size:14px;flex-shrink:0;}
 .ai-quickadd button{background:var(--emerald);color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:11.5px;font-weight:700;flex-shrink:0;}
 
+.cloud-pill{display:flex;align-items:center;gap:7px;background:var(--sidebar);color:var(--sidebar-text);border-radius:20px;padding:7px 12px;font-size:12px;font-weight:600;flex-shrink:0;}
+.cloud-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--done);flex-shrink:0;box-shadow:0 0 0 3px rgba(78,140,91,.18);}
+.topbar-user-chip{display:flex;align-items:center;gap:8px;background:var(--sidebar);border-radius:20px;padding:4px 12px 4px 4px;flex-shrink:0;cursor:pointer;transition:.12s;}
+.topbar-user-chip:hover{filter:brightness(1.2);}
+.topbar-user-chip .avatar{width:26px;height:26px;font-size:11px;}
+.topbar-user-info{line-height:1.25;}
+.topbar-user-name{font-size:12.5px;font-weight:700;color:#fff;white-space:nowrap;}
+.topbar-user-role{font-size:10.5px;font-weight:700;color:var(--emerald);text-transform:uppercase;letter-spacing:.03em;}
+@media (max-width: 980px){ .cloud-pill{display:none;} .topbar-user-info{display:none;} }
+
 #content{flex:1;overflow-y:auto;padding:22px 26px 60px;}
 
 /* Badges & chips */
@@ -460,6 +470,14 @@ a{color:inherit;}
         <input type="text" id="aiInput" placeholder="Giao việc nhanh bằng ngôn ngữ tự nhiên… (VD: giao anh Minh làm báo cáo, hạn thứ 6, ưu tiên cao)"/>
         <button id="aiSubmitBtn">Tạo</button>
       </div>
+      <div class="cloud-pill" id="cloudStatus"><span class="dot"></span><span class="txt">Đang đồng bộ Cloud…</span></div>
+      <div class="topbar-user-chip" id="topbarUserChip">
+        <div class="avatar" id="topbarUserAvatar"></div>
+        <div class="topbar-user-info">
+          <div class="topbar-user-name" id="topbarUserName">—</div>
+          <div class="topbar-user-role" id="topbarUserRole">—</div>
+        </div>
+      </div>
       <button class="icon-btn" id="themeToggle" title="Đổi giao diện sáng/tối">☾</button>
       <button class="btn-primary" id="newTaskBtn">＋ Việc mới</button>
     </div>
@@ -642,13 +660,15 @@ $("#googleSignInBtn").addEventListener("click", async ()=>{
     toast("Đăng nhập thất bại: "+e.message, "err");
   }
 });
-$("#userChip").addEventListener("click", async ()=>{
+async function handleUserChipClick(){
   if(CONFIG.DEV_BYPASS_AUTH){
     toast("Đang ở chế độ Dev Bypass — đặt CONFIG.DEV_BYPASS_AUTH = false trong code để dùng đăng nhập/đăng xuất thật");
     return;
   }
   if(confirm("Đăng xuất khỏi Sổ Việc?")){ await signOut(auth); location.reload(); }
-});
+}
+$("#userChip").addEventListener("click", handleUserChipClick);
+$("#topbarUserChip").addEventListener("click", handleUserChipClick);
 
 if(CONFIG.DEV_BYPASS_AUTH){
   // ---- DEV BYPASS: bỏ qua màn đăng nhập Google để kiểm thử nhanh ----
@@ -661,26 +681,61 @@ if(CONFIG.DEV_BYPASS_AUTH){
       return;
     }
     S.user = { uid: user.uid, name: user.displayName || user.email, email: user.email, photoURL: user.photoURL };
-    await ensureUserProfile();
+    S.profile = { name: S.user.name, email: S.user.email, photoURL: S.user.photoURL||null, role: CONFIG.DEFAULT_ROLE };
     $("#loginScreen").style.display = "none";
     $("#app").classList.add("ready");
     renderUserChip();
     applyRoleUI();
-    listenUsers();
-    listenProjects();
+    setCloudStatus("syncing");
+    try{
+      await ensureUserProfile();
+      renderUserChip();
+      applyRoleUI();
+      listenUsers();
+      listenProjects();
+      setCloudStatus("ok");
+    }catch(e){
+      setCloudStatus("err");
+      toast("Không đồng bộ được Firestore: "+e.message, "err");
+    }
   });
 }
 
 async function bootstrapDevUser(){
   S.user = { ...CONFIG.DEV_BYPASS_USER, photoURL: null };
-  await ensureUserProfile();
+  // Show the app immediately — never let a Firestore hiccup leave the login screen stuck.
+  S.profile = { name: S.user.name, email: S.user.email, photoURL: null, role: "admin" };
   $("#loginScreen").style.display = "none";
   $("#app").classList.add("ready");
   renderUserChip();
   applyRoleUI();
-  listenUsers();
-  listenProjects();
-  toast("Chế độ Dev Bypass đang bật — không cần đăng nhập Google");
+  setCloudStatus("syncing");
+  try{
+    await ensureUserProfile();
+    renderUserChip();
+    applyRoleUI();
+    listenUsers();
+    listenProjects();
+    setCloudStatus("ok");
+    toast("Chế độ Dev Bypass đang bật — không cần đăng nhập Google");
+  }catch(e){
+    setCloudStatus("err");
+    toast("Không đồng bộ được Firestore (đang dùng dữ liệu local tạm thời): "+e.message, "err");
+  }
+}
+
+/* Small cloud-sync status pill in the topbar */
+function setCloudStatus(state){
+  const el = $("#cloudStatus");
+  if(!el) return;
+  const map = {
+    syncing: { dot:"var(--medium)", text:"Đang đồng bộ Cloud…" },
+    ok: { dot:"var(--done)", text:"Đã đồng bộ Cloud" },
+    err: { dot:"var(--urgent)", text:"Lỗi đồng bộ Cloud" },
+  };
+  const s = map[state] || map.ok;
+  el.querySelector(".dot").style.background = s.dot;
+  el.querySelector(".txt").textContent = s.text;
 }
 
 async function ensureUserProfile(){
@@ -707,6 +762,15 @@ function renderUserChip(){
   }
   $("#userName").textContent = S.user.name;
   $("#userRole").textContent = ROLE_LABEL[S.profile.role] || "Thành viên";
+  // mirror into the compact topbar chip
+  const tbAvatar = $("#topbarUserAvatar");
+  if(tbAvatar){
+    tbAvatar.innerHTML = S.user.photoURL ? `<img src="${S.user.photoURL}" style="width:100%;height:100%;object-fit:cover;" alt=""/>` : "";
+    tbAvatar.style.overflow = "hidden";
+    if(!S.user.photoURL) tbAvatar.textContent = initials(S.user.name);
+  }
+  const tbName = $("#topbarUserName"); if(tbName) tbName.textContent = S.user.name;
+  const tbRole = $("#topbarUserRole"); if(tbRole) tbRole.textContent = ROLE_LABEL[S.profile.role] || "Thành viên";
 }
 function applyRoleUI(){
   const isAdmin = S.profile.role === "admin";
