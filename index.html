@@ -490,6 +490,7 @@ a{color:inherit;}
 <!-- ===================== FIREBASE ===================== -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -504,6 +505,7 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyCkpDX2ixW-A1ndZH_wIvvEhhS1HbX3PZk",
   authDomain: "task-assign-bc986.firebaseapp.com",
+  databaseURL: "https://task-assign-bc986-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "task-assign-bc986",
   storageBucket: "task-assign-bc986.firebasestorage.app",
   messagingSenderId: "495463632827",
@@ -515,10 +517,17 @@ const firebaseConfig = {
    CẤU HÌNH TÙY CHỈNH — sửa trực tiếp ở đây
    ============================================================ */
 const CONFIG = {
-  // Email nằm trong danh sách này sẽ tự động là Admin khi đăng nhập lần đầu
+  // Whitelist quản lý/leader/sub-lead: được tự động gán vai trò + khu vực + chức danh
+  // khi đăng nhập Google lần đầu. Người dùng KHÔNG có trong danh sách này vẫn đăng nhập
+  // được bình thường và nhận vai trò DEFAULT_ROLE (member).
   ADMIN_EMAILS: [
-    // "ban@congty.com",
-    "dev@local.test",
+    { email: "ngoc.buiuyen@spxexpress.com", regions: "ALL", title: "Manager (Tổng quan)", role: "admin" },
+    { email: "khang.nguyentan@spxexpress.com", regions: "ALL", title: "Leader HCM", role: "manager" },
+    { email: "anh.nguyenthi.lan@spxexpress.com", regions: "ALL", title: "Leader HN", role: "manager" },
+    { email: "hoangminh.tran@spxexpress.com", regions: ["HCM"], title: "Sub-lead Cháo Bầu (HCM)", role: "manager" },
+    { email: "nghia.nguyenhuu@spxexpress.com", regions: ["HCM"], title: "Sub-lead Cá Nướng (HCM)", role: "manager" },
+    { email: "hoainam.dinh@spxexpress.com", regions: ["HN"], title: "Sub-lead Hồ Gươm (HN)", role: "manager" },
+    { email: "huong.thupham@spxexpress.com", regions: ["HN"], title: "Sub-lead Hồ Tây (HN)", role: "manager" },
   ],
   // Vai trò mặc định cho người dùng mới không nằm trong ADMIN_EMAILS
   DEFAULT_ROLE: "member", // 'admin' | 'manager' | 'member'
@@ -528,15 +537,21 @@ const CONFIG = {
      Đặt về false (hoặc xoá cả khối này) trước khi đưa vào dùng
      thật để bắt buộc đăng nhập Google trở lại.
      ========================================================== */
-  DEV_BYPASS_AUTH: true,
+  DEV_BYPASS_AUTH: false,
   DEV_BYPASS_USER: {
     uid: "dev-local-user",
     name: "Người dùng thử nghiệm",
     email: "dev@local.test",
   },
 };
+function findWhitelistEntry(email){
+  if(!email) return null;
+  return CONFIG.ADMIN_EMAILS.find(e => e.email.toLowerCase() === email.toLowerCase()) || null;
+}
 
 const app = initializeApp(firebaseConfig);
+// Analytics is optional and can fail to load (ad-blockers, unsupported env) — never let it break the app.
+analyticsIsSupported().then(ok=>{ if(ok){ try{ getAnalytics(app); }catch(e){} } }).catch(()=>{});
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
@@ -741,13 +756,22 @@ function setCloudStatus(state){
 async function ensureUserProfile(){
   const ref = doc(db, "users", S.user.uid);
   const snap = await getDoc(ref);
+  const wl = findWhitelistEntry(S.user.email);
   if(snap.exists()){
     S.profile = snap.data();
-    // keep name/photo fresh
-    await updateDoc(ref, { name: S.user.name, email: S.user.email, photoURL: S.user.photoURL||null, lastSeen: serverTimestamp() });
+    // keep name/photo/title/region fresh — if someone's whitelist entry changes (new title,
+    // promoted to manager, etc.) it re-applies next login without needing a manual role edit.
+    const freshFields = { name: S.user.name, email: S.user.email, photoURL: S.user.photoURL||null, lastSeen: serverTimestamp() };
+    if(wl){ freshFields.title = wl.title; freshFields.regions = wl.regions; }
+    await updateDoc(ref, freshFields);
+    S.profile = { ...S.profile, ...freshFields };
   }else{
-    const role = CONFIG.ADMIN_EMAILS.includes(S.user.email) ? "admin" : CONFIG.DEFAULT_ROLE;
-    S.profile = { name: S.user.name, email: S.user.email, photoURL: S.user.photoURL||null, role, createdAt: serverTimestamp() };
+    const role = wl ? wl.role : CONFIG.DEFAULT_ROLE;
+    S.profile = {
+      name: S.user.name, email: S.user.email, photoURL: S.user.photoURL||null,
+      role, title: wl?.title || null, regions: wl?.regions || null,
+      createdAt: serverTimestamp(),
+    };
     await setDoc(ref, S.profile);
   }
 }
@@ -760,8 +784,9 @@ function renderUserChip(){
   }else{
     $("#userAvatar").textContent = initials(S.user.name);
   }
+  const roleLabel = S.profile.title || ROLE_LABEL[S.profile.role] || "Thành viên";
   $("#userName").textContent = S.user.name;
-  $("#userRole").textContent = ROLE_LABEL[S.profile.role] || "Thành viên";
+  $("#userRole").textContent = roleLabel;
   // mirror into the compact topbar chip
   const tbAvatar = $("#topbarUserAvatar");
   if(tbAvatar){
@@ -770,7 +795,7 @@ function renderUserChip(){
     if(!S.user.photoURL) tbAvatar.textContent = initials(S.user.name);
   }
   const tbName = $("#topbarUserName"); if(tbName) tbName.textContent = S.user.name;
-  const tbRole = $("#topbarUserRole"); if(tbRole) tbRole.textContent = ROLE_LABEL[S.profile.role] || "Thành viên";
+  const tbRole = $("#topbarUserRole"); if(tbRole) tbRole.textContent = roleLabel;
 }
 function applyRoleUI(){
   const isAdmin = S.profile.role === "admin";
@@ -1526,6 +1551,7 @@ function renderTeamView(c){
       <div>
         <div style="font-weight:600;font-size:13.5px;">${esc(u.name)}</div>
         <div style="font-size:12px;color:var(--ink-faint);">${esc(u.email)}</div>
+        ${u.title ? `<div style="font-size:11px;color:var(--emerald);font-weight:700;margin-top:2px;">${esc(u.title)}${u.regions?` · ${Array.isArray(u.regions)?u.regions.join(", "):esc(u.regions)}`:''}</div>` : ''}
       </div>
       <select class="role-select" data-role-for="${u.uid}" ${u.uid===S.user.uid?'disabled':''}>
         <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
